@@ -1,0 +1,18 @@
+.register {
+    height: 100vh;
+    background-image: url('https://img3.thuthuatphanmem.vn/uploads/2019/10/10/background-dong-don-gian-ma-dep_032847889.gif');
+    background-repeat: no-repeat;
+    background-size: cover;
+    .title {
+        color: #fff;
+    }
+    form {
+        label {
+            color: #fff;
+        }
+        border: 1px solid #ccc;
+        padding: 20px;
+        width: 500px;
+        margin: 28px auto;
+    }
+}
