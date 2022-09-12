@@ -41,11 +41,10 @@ function Profile() {
                 /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
                 'Please enter a valid email address'
             ),
-            password: Yup.string(),
-            // .matches(
-            //     /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d][A-Za-z\d!@#$%^&*()_+]{4,15}$/,
-            //     'Password must be 4-15 characters and contain at least one letter, one number and a special character'
-            // ),
+            password: Yup.string().matches(
+                /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d][A-Za-z\d!@#$%^&*()_+]{4,15}$/,
+                'Password must be 4-15 characters and contain at least one letter, one number and a special character'
+            ),
         }),
         onSubmit: async values => {
             setLoading(true);
