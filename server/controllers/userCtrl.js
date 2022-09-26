@@ -14,7 +14,6 @@ const userCtrl = {
         }
     },
     updateInfo: async(req, res) => {
-        console.log('vao day');
         const id = req.params.id;
         if (req.body.password) {
             const salt = await bcrypt.genSalt(10);

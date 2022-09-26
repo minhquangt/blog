@@ -2,13 +2,13 @@ const Posts = require('../models/postModel');
 
 const postCtrl = {
     create: async(req, res) => {
-        const { title, desc, photo, username } = req.body;
+        const { title, desc, photo, userId } = req.body;
         try {
             const newPost = new Posts({
                 title,
                 desc,
                 photo,
-                username,
+                userId,
             });
 
             // Save mongodb
@@ -40,8 +40,8 @@ const postCtrl = {
     },
     getMyPosts: async(req, res) => {
         try {
-            const { username } = req.params;
-            const posts = await Posts.find({ username: username });
+            const { userId } = req.params;
+            const posts = await Posts.find({ userId: userId });
 
             return res.status(200).json(posts);
         } catch (error) {
@@ -78,7 +78,7 @@ const postCtrl = {
             );
             return res.status(200).json(updatedPost);
         } catch (err) {
-            return res.status(500).json({ msg: error.message });
+            return res.status(500).json({ msg: err.message });
         }
     },
     delete: async(req, res) => {

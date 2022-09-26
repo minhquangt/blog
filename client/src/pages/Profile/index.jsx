@@ -6,6 +6,9 @@ import './profile.scss';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import Loading from '../../components/Loading';
+import axiosAttachHeader from '../../api/axiosAttachHeader';
+import { toastNotify } from '../../utils/toastNotify';
+import { ToastContainer } from 'react-toastify';
 
 function Profile() {
     const userSel = useSelector(userSelector);
@@ -15,10 +18,12 @@ function Profile() {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        const getMyPosts = async () => {
+        const getMyProfile = async () => {
             try {
                 setLoading(true);
-                const res = await axiosClient.get(`/api/user/${userSel._id}`);
+                const res = await axiosAttachHeader.get(
+                    `/api/user/${userSel._id}`
+                );
                 setUser(res.data);
                 setLoading(false);
             } catch (error) {
@@ -26,7 +31,7 @@ function Profile() {
                 setLoading(false);
             }
         };
-        if (user) getMyPosts();
+        if (user) getMyProfile();
     }, []);
 
     const formikUpdateUser = useFormik({
@@ -64,19 +69,27 @@ function Profile() {
                     console.log(err);
                 }
             }
-            const updatedUser = await axiosClient.put(
-                `/api/user/${userSel._id}`,
-                infoUser
-            );
-            if (updatedUser) {
-                dispatch(updateUser(updatedUser.data));
+            try {
+                const updatedUser = await axiosAttachHeader.put(
+                    `/api/user/${userSel._id}`,
+                    infoUser
+                );
+                if (updatedUser) {
+                    dispatch(updateUser(updatedUser.data));
+                    setLoading(false);
+                }
+                toastNotify('success', 'Update profile successfully!!!');
+            } catch (err) {
+                console.log(err);
                 setLoading(false);
+                toastNotify('error', 'Update profile failed!!!');
             }
         },
     });
 
     return (
         <div className="container profile pt-4">
+            <ToastContainer />
             <h3 className="text-center title">MY INFO</h3>
             <form onSubmit={formikUpdateUser.handleSubmit}>
                 <div className="mb-3">

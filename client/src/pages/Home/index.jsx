@@ -1,5 +1,5 @@
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
+import axiosClient from '../../api/axiosClient';
 import Loading from '../../components/Loading';
 import PostItem from '../../components/PostItem';
 import Search from '../../components/Search';
@@ -13,7 +13,7 @@ function Home() {
         const getAllPosts = async () => {
             try {
                 setLoading(true);
-                const res = await axios.get('/api/post');
+                const res = await axiosClient.get('/api/post');
                 setPosts(res.data);
                 setLoading(false);
             } catch (error) {

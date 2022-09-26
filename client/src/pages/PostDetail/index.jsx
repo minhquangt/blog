@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { userSelector } from '../../store/reducers/userReducer';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import './postDetail.scss';
-import axios from 'axios';
+import { useNavigate, useParams } from 'react-router-dom';
+import axiosAttachHeader from '../../api/axiosAttachHeader';
 import Loading from '../../components/Loading';
+import { userSelector } from '../../store/reducers/userReducer';
+import { toastNotify } from '../../utils/toastNotify';
+import './postDetail.scss';
+import { ToastContainer } from 'react-toastify';
 
 function PostDetail() {
     const [post, setPost] = useState({});
+    const [username, setUsername] = useState('');
     const user = useSelector(userSelector);
     const [title, setTitle] = useState('');
     const [desc, setDesc] = useState('');
@@ -20,8 +23,16 @@ function PostDetail() {
     useEffect(() => {
         const getOnePost = async () => {
             try {
-                const res = await axios.get(`/api/post/${params.id}`);
+                const res = await axiosAttachHeader.get(
+                    `/api/post/${params.id}`
+                );
                 setPost(res.data);
+
+                const resUser = await axiosAttachHeader.get(
+                    `/api/user/${res.data.userId}`
+                );
+                setUsername(resUser.data.username);
+
                 setTitle(res.data.title);
                 setDesc(res.data.desc);
                 setDate(res.data.updatedAt);
@@ -34,7 +45,7 @@ function PostDetail() {
     const handleUpdate = async id => {
         setLoading(true);
         try {
-            const updatePost = await axios.put(`/api/post/${id}`, {
+            const updatePost = await axiosAttachHeader.put(`/api/post/${id}`, {
                 title,
                 desc,
             });
@@ -44,24 +55,29 @@ function PostDetail() {
             setDate(updatePost.data.updatedAt);
             setLoading(false);
             setUpdateMode(false);
-        } catch (error) {
+            toastNotify('success', 'Update post successfully!!!');
+        } catch (err) {
+            console.log(err);
             setLoading(false);
-            console.log(error);
+            toastNotify('error', 'Update post failed!!!');
         }
     };
     const handleDelete = async id => {
         setLoading(true);
         try {
-            await axios.delete(`/api/post/${id}`);
+            await axiosAttachHeader.delete(`/api/post/${id}`);
             setLoading(false);
             navigate('/my-blog');
-        } catch (error) {
+            toastNotify('success', 'Delete post successfully!!!');
+        } catch (err) {
+            console.log(err);
             setLoading(false);
-            console.log(error);
+            toastNotify('error', 'Delete post failed!!!');
         }
     };
     return (
         <div className="singlePost">
+            <ToastContainer />
             <div className="singlePostWrapper">
                 {post.photo && (
                     <img src={post.photo} alt="" className="singlePostImg" />
@@ -77,7 +93,7 @@ function PostDetail() {
                 ) : (
                     <h1 className="singlePostTitle">
                         {title}
-                        {post.username === user?.username && (
+                        {post.userId === user?._id && (
                             <div className="singlePostEdit">
                                 <i
                                     className="singlePostIcon far fa-edit"
@@ -94,7 +110,7 @@ function PostDetail() {
                 <div className="singlePostInfo">
                     <span className="singlePostAuthor">
                         Author:
-                        <b> {post.username}</b>
+                        <b> {username}</b>
                     </span>
                     <span className="singlePostDate">
                         {new Date(date).toDateString()}

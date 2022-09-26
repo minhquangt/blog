@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import axiosClient from '../../api/axiosClient';
+import axiosAttachHeader from '../../api/axiosAttachHeader';
 import Loading from '../../components/Loading';
 import PostItem from '../../components/PostItem';
 import Search from '../../components/Search';
@@ -17,8 +17,8 @@ function MyBlog() {
         const getMyPosts = async () => {
             try {
                 setLoading(true);
-                const res = await axiosClient.get(
-                    `/api/post/me/${user.username}`
+                const res = await axiosAttachHeader.get(
+                    `/api/post/me/${user._id}`
                 );
                 setMyPosts(res.data);
                 setLoading(false);

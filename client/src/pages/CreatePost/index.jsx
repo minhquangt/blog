@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import axiosAttachHeader from '../../api/axiosAttachHeader';
 import axiosClient from '../../api/axiosClient';
 import Loading from '../../components/Loading';
 import { userSelector } from '../../store/reducers/userReducer';
+import { toastNotify } from '../../utils/toastNotify';
 import './createPost.scss';
 
 function CreatePost() {
@@ -16,7 +19,7 @@ function CreatePost() {
     const handleSubmit = async e => {
         e.preventDefault();
         const newPost = {
-            username: user.username,
+            userId: user._id,
             title,
             desc,
         };
@@ -37,18 +40,21 @@ function CreatePost() {
             console.log(err);
         }
         try {
-            await axiosClient.post('/api/post', newPost);
+            await axiosAttachHeader.post('/api/post', newPost);
             setTitle('');
             setDesc('');
             setFile(null);
             setLoading(false);
+            toastNotify('success', 'Create post successfully!!!');
         } catch (err) {
-            setLoading(false);
             console.log(err);
+            setLoading(false);
+            toastNotify('error', 'Create post failed!!!');
         }
     };
     return (
         <>
+            <ToastContainer />
             {user ? (
                 <div className="createPost">
                     {file && (

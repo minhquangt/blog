@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './search.scss';
 import queryString from 'query-string';
-import axios from 'axios';
 import Loading from '../Loading';
+import axiosClient from '../../api/axiosClient';
 
 function Search({ setPosts, username }) {
     const location = useLocation();
@@ -21,11 +21,11 @@ function Search({ setPosts, username }) {
         let res;
         setLoading(true);
         if (!username) {
-            res = await axios.post(`/api/post/search`, {
+            res = await axiosClient.post(`/api/post/search`, {
                 title: e.target.value,
             });
         } else {
-            res = await axios.post(`/api/post/search`, {
+            res = await axiosClient.post(`/api/post/search`, {
                 title: e.target.value,
                 username: username,
             });
